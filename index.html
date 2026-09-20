@@ -12,7 +12,7 @@
      HTTP-header-only and intentionally omitted: GitHub Pages serves no custom
      headers, and equivalent <meta> tags are ignored by browsers. CSP below
      IS enforced via meta; clickjacking is mitigated by JS frame-busting. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self' mailto:; img-src 'self' https: data: blob:; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.github.com; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self' mailto:; img-src 'self' https: data: blob:; script-src 'self' https://www.googletagmanager.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.github.com https://www.google-analytics.com https://*.google-analytics.com https://*.googletagmanager.com; upgrade-insecure-requests">
 <meta property="og:title" content="Neather Launcher — Free Minecraft Launcher">
 <meta property="og:description" content="Fast, free Minecraft launcher for Windows & Linux. High FPS, mods, skins & servers. No account. No paywall.">
 <meta property="og:type" content="website">
@@ -31,6 +31,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VX44N9H66D"></script>
+<script src="js/analytics.js" defer></script>
 <link rel="stylesheet" href="css/style.css">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"SoftwareApplication","name":"Neather Launcher","applicationCategory":"GameApplication","operatingSystem":["Windows 10","Windows 11","Linux"],"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free Minecraft launcher with high FPS, modloaders, skins, and Paper & Fabric server support. No sign-up, no paywall.","url":"https://neatherlauncher.github.io/","downloadUrl":"https://github.com/neatherlauncher/neatherlauncher.github.io/releases","author":{"@type":"Person","name":"Shahriar Mahmud"},"isAccessibleForFree":true}

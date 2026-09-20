@@ -10,11 +10,14 @@
 <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
 <!-- Note: X-Content-Type-Options / Permissions-Policy / frame-ancestors are
      HTTP-header-only and intentionally omitted (see index.html). -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self' mailto:; img-src 'self' https: data: blob:; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.github.com; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self' mailto:; img-src 'self' https: data: blob:; script-src 'self' https://www.googletagmanager.com; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.github.com https://www.google-analytics.com https://*.google-analytics.com https://*.googletagmanager.com; upgrade-insecure-requests">
 <link rel="icon" type="image/png" href="assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://www.googletagmanager.com">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VX44N9H66D"></script>
+<script src="js/analytics.js" defer></script>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-dim="overworld">
