@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://neatherlauncher.github.io/sitemap.xml

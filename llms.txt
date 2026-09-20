@@ -1,0 +1,29 @@
+# Neather Launcher
+
+> Free Minecraft launcher for Windows & Linux. High FPS, mods, skins & servers. No sign-up, no paywall.
+
+- Home: https://neatherlauncher.github.io/
+- All versions & downloads: https://github.com/neatherlauncher/neatherlauncher.github.io/releases
+- Latest: v0.0.1 stable — Windows Portable (.zip, ~25 MB)
+
+## Features
+
+- +15% performance via smart Java flags (FPS Boost config)
+- Offline + Ely.by accounts; apply & change skins
+- Multiple game instances, one click per version
+- 6 modloaders in one click
+- Paper & Fabric server setup in one click
+- Minecraft tools: gallery + calculators
+- Versions from classic 1.0 to the latest release
+
+## How to play (no sign-up)
+
+1. Download for your OS from the Versions section.
+2. Create an instance — pick version + modloader.
+3. Set a name, hit Play.
+
+## Notes
+
+- Free forever, no subscriptions, no paywalled features.
+- Not affiliated with Mojang / Microsoft. Premium-only servers need a paid account.
+- Maintained by Shahriar Mahmud.

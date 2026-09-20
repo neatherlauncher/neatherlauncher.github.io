@@ -1,1286 +1,274 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neather Launcher - Modern Minecraft Launcher</title>
-    <link rel="icon" type="image/png" href="assets/FABCION.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        :root {
-            --primary-green: #00ff88;
-            --dark-green: #00cc6a;
-            --light-green: #66ffbb;
-            --neon-green: #39ff14;
-            --bg-dark: #0a0e14;
-            --bg-darker: #050810;
-            --glass-bg: rgba(10, 25, 20, 0.25);
-            --glass-border: rgba(0, 255, 136, 0.25);
-            --text-primary: #e0ffe8;
-            --text-secondary: #99ffcc;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'Jersey 10', system-ui, sans-serif;
-            background: var(--bg-darker);
-            color: var(--text-primary);
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-
-        /* Animated Background */
-        .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            background: linear-gradient(135deg, #0a0e14 0%, #0d1520 50%, #0a1212 100%);
-        }
-
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-
-        .particle {
-            position: absolute;
-            background: var(--primary-green);
-            opacity: 0.6;
-            animation: float linear infinite;
-            box-shadow: 0 0 10px var(--primary-green);
-        }
-
-        @keyframes float {
-            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.6; }
-            90% { opacity: 0.6; }
-            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
-        }
-
-        .orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.4;
-            z-index: -1;
-            animation: orbMove 20s ease-in-out infinite;
-        }
-
-        .orb1 {
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, var(--primary-green) 0%, transparent 70%);
-            top: -200px;
-            left: -200px;
-            animation-duration: 25s;
-        }
-
-        .orb2 {
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, var(--neon-green) 0%, transparent 70%);
-            bottom: -300px;
-            right: -300px;
-            animation-duration: 30s;
-            animation-delay: -10s;
-        }
-
-        .orb3 {
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, var(--dark-green) 0%, transparent 70%);
-            top: 50%;
-            left: 50%;
-            animation-duration: 35s;
-            animation-delay: -20s;
-        }
-
-        @keyframes orbMove {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(100px, 100px) scale(1.2); }
-            66% { transform: translate(-100px, -50px) scale(0.8); }
-        }
-
-        .grid-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(rgba(0, 255, 136, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 136, 0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
-            z-index: -1;
-            animation: gridScroll 20s linear infinite;
-        }
-
-        @keyframes gridScroll {
-            0% { background-position: 0 0; }
-            100% { background-position: 40px 40px; }
-        }
-
-        /* Navigation */
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: var(--glass-bg);
-            backdrop-filter: blur(25px) saturate(180%);
-            border-bottom: 1px solid var(--glass-border);
-            padding: 1rem 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        .logo-img {
-            width: 120px;
-            height: auto;
-            max-height: 60px;
-            object-fit: contain;
-            filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.8));
-            animation: logoFloat 3s ease-in-out infinite;
-            transition: transform 0.3s ease;
-            cursor: pointer;
-        }
-
-        .logo-img:hover {
-            transform: scale(1.05);
-        }
-
-        @keyframes logoFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
-        }
-
-        /* Real-time Clock */
-        .nav-clock {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            padding: 0.6rem 1.2rem;
-            border-radius: 50px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
-        }
-
-        .clock-icon {
-            color: var(--primary-green);
-            width: 20px;
-            height: 20px;
-        }
-
-        .clock-time {
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: var(--text-primary);
-            letter-spacing: 1px;
-        }
-
-        .clock-date {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        /* EMPTY TOP SECTION SPACER */
-        .empty-scroll-spacer {
-            height: 85vh;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            align-items: center;
-            padding-bottom: 3rem;
-        }
-
-        .scroll-hint {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            opacity: 0.7;
-            animation: bounce 2s infinite;
-        }
-
-        .scroll-text {
-            color: var(--primary-green);
-            font-size: 1.2rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .scroll-icon {
-            color: var(--text-primary);
-            width: 32px;
-            height: 32px;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-            40% {transform: translateY(-10px);}
-            60% {transform: translateY(-5px);}
-        }
-
-        /* WELCOME CARD (Re-created) */
-        .welcome-section {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin-bottom: 4rem;
-            padding: 0 1rem;
-        }
-
-        .welcome-card {
-            background: linear-gradient(145deg, rgba(10, 30, 20, 0.7), rgba(0, 0, 0, 0.8));
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 30px;
-            padding: 3rem 5rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            max-width: 1000px;
-            width: 100%;
-            box-shadow: 0 20px 80px rgba(0, 255, 136, 0.2);
-            transform: translateY(50px);
-            opacity: 0;
-            transition: all 1s ease;
-        }
-
-        .welcome-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
-            animation: scanline 4s linear infinite;
-        }
-
-        .welcome-card.active {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        .welcome-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(0, 255, 136, 0.1);
-            padding: 8px 20px;
-            border-radius: 50px;
-            border: 1px solid var(--primary-green);
-            margin-bottom: 1.5rem;
-            font-size: 1rem;
-            color: var(--primary-green);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .pulse-dot {
-            width: 10px;
-            height: 10px;
-            background: var(--neon-green);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--neon-green);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.2); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-
-        .welcome-title {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            color: #fff;
-            text-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
-        }
-
-        .welcome-subtitle {
-            color: var(--text-secondary);
-            font-size: 1.4rem;
-            line-height: 1.6;
-        }
-
-        /* Download Warning Modal */
-        .download-warning-modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
-            animation: fadeIn 0.3s ease;
-        }
-
-        .download-warning-modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .warning-content {
-            background: linear-gradient(135deg, var(--bg-dark), var(--bg-darker));
-            padding: 3rem;
-            border-radius: 25px;
-            border: 2px solid rgba(255, 200, 0, 0.4);
-            box-shadow: 0 20px 60px rgba(255, 200, 0, 0.3);
-            max-width: 600px;
-            width: 90%;
-            position: relative;
-            animation: slideUp 0.4s ease;
-        }
-        
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .warning-icon {
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .warning-icon i {
-            width: 80px;
-            height: 80px;
-            color: #ffc800;
-        }
-
-        .warning-content h2 {
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
-            color: #ffc800;
-            text-align: center;
-        }
-
-        .warning-text {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            line-height: 1.8;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        .warning-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-        }
-
-        .warning-btn {
-            padding: 1rem 2rem;
-            font-size: 1.1rem;
-            font-family: 'Jersey 10', sans-serif;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-            border: 2px solid;
-        }
-
-        .warning-btn-download {
-            background: linear-gradient(135deg, var(--neon-green), var(--primary-green));
-            color: var(--bg-darker);
-            border-color: var(--primary-green);
-            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.4);
-        }
-
-        .warning-btn-download:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 30px rgba(0, 255, 136, 0.6);
-        }
-
-        .warning-btn-cancel {
-            background: transparent;
-            color: var(--text-secondary);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .warning-btn-cancel:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: var(--text-secondary);
-            transform: scale(1.05);
-        }
-
-        /* Main Content */
-        main {
-            padding-top: 100px;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding-left: 2rem;
-            padding-right: 2rem;
-        }
-
-        /* Hero Section */
-        .hero {
-            min-height: 80vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 2rem 2rem 4rem 2rem;
-            position: relative;
-        }
-
-        h1 {
-            font-size: clamp(3rem, 8vw, 7rem);
-            font-weight: 900;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, var(--primary-green), var(--light-green), var(--neon-green));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 0 80px rgba(0, 255, 136, 0.5);
-            animation: glow 3s ease-in-out infinite;
-            letter-spacing: 3px;
-        }
-
-        @keyframes glow {
-            0%, 100% { text-shadow: 0 0 40px rgba(0, 255, 136, 0.5); }
-            50% { text-shadow: 0 0 80px rgba(0, 255, 136, 0.8), 0 0 120px rgba(0, 255, 136, 0.5); }
-        }
-
-        .hero p {
-            font-size: clamp(1.3rem, 3vw, 1.8rem);
-            max-width: 800px;
-            margin-bottom: 3rem;
-            color: var(--text-secondary);
-            line-height: 1.8;
-        }
-
-        .cta-button {
-            padding: 1.2rem 3rem;
-            font-size: 1.4rem;
-            font-family: 'Jersey 10', sans-serif;
-            background: linear-gradient(135deg, var(--neon-green), var(--primary-green));
-            color: var(--bg-darker);
-            border: 3px solid var(--primary-green);
-            border-radius: 60px;
-            cursor: pointer;
-            font-weight: bold;
-            letter-spacing: 2px;
-            transition: all 0.4s ease;
-            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.5);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .cta-button:hover {
-            transform: scale(1.08) translateY(-5px);
-            box-shadow: 0 15px 60px rgba(0, 255, 136, 0.8);
-        }
-
-        /* Sections */
-        section {
-            padding: 5rem 0;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease;
-        }
-
-        section.reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Specific for Welcome Card Animation */
-        .welcome-section.reveal.active .welcome-card {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        h2 {
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            text-align: center;
-            margin-bottom: 3rem;
-            color: var(--primary-green);
-            text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
-        }
-
-        /* Glass Cards */
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid var(--glass-border);
-            border-radius: 25px;
-            padding: 3rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            transition: all 0.4s ease;
-        }
-
-        .glass-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 50px rgba(0, 255, 136, 0.3);
-            border-color: var(--primary-green);
-        }
-
-        /* Features Grid */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2.5rem;
-            margin-top: 3rem;
-        }
-
-        .feature-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 2.5rem;
-            text-align: center;
-            transition: all 0.4s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 15px 50px rgba(0, 255, 136, 0.3);
-            border-color: var(--primary-green);
-        }
-
-        .feature-icon {
-            color: var(--primary-green);
-            width: 60px;
-            height: 60px;
-            margin-bottom: 1.5rem;
-            filter: drop-shadow(0 0 20px var(--primary-green));
-        }
-
-        .feature-title {
-            font-size: 1.8rem;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-        }
-
-        .feature-desc {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
-
-        /* Image Slider */
-        .slider-container {
-            max-width: 1000px;
-            margin: 3rem auto;
-            position: relative;
-        }
-
-        .slider-wrapper {
-            overflow: hidden;
-            border-radius: 20px;
-            border: 2px solid var(--glass-border);
-            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
-        }
-
-        .slider-track {
-            display: flex;
-            transition: transform 0.5s ease;
-        }
-
-        .slide {
-            min-width: 100%;
-            position: relative;
-        }
-
-        .slide img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .slider-nav {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .slider-btn {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: var(--primary-green);
-        }
-
-        .slider-btn:hover {
-            background: var(--primary-green);
-            color: var(--bg-darker);
-            transform: scale(1.1);
-        }
-
-        .slider-dots {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .dot.active {
-            background: var(--primary-green);
-            box-shadow: 0 0 15px var(--primary-green);
-            transform: scale(1.3);
-        }
-
-        /* Download Section */
-        .download-section {
-            text-align: center;
-        }
-
-        .download-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1.5rem 3.5rem;
-            font-size: 1.5rem;
-            font-family: 'Jersey 10', sans-serif;
-            background: linear-gradient(135deg, var(--neon-green), var(--primary-green));
-            color: var(--bg-darker);
-            border: 3px solid var(--primary-green);
-            border-radius: 60px;
-            cursor: pointer;
-            font-weight: bold;
-            letter-spacing: 2px;
-            transition: all 0.4s ease;
-            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.5);
-            text-decoration: none;
-        }
-
-        .download-btn:hover {
-            transform: scale(1.08) translateY(-5px);
-            box-shadow: 0 15px 60px rgba(0, 255, 136, 0.8);
-        }
-
-        .download-icon {
-            width: 32px;
-            height: 32px;
-        }
-
-        .download-note {
-            margin-top: 1.5rem;
-            color: var(--text-secondary);
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        /* Versions Table */
-        .table-container {
-            overflow-x: auto;
-            margin-top: 2rem;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid var(--glass-border);
-        }
-
-        thead {
-            background: rgba(0, 255, 136, 0.1);
-        }
-
-        th, td {
-            padding: 1.5rem;
-            text-align: left;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        th {
-            color: var(--primary-green);
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        td {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-        }
-
-        tbody tr {
-            transition: all 0.3s ease;
-        }
-
-        tbody tr:hover {
-            background: rgba(0, 255, 136, 0.05);
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 4rem 2rem;
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            border-top: 1px solid var(--glass-border);
-            margin-top: 5rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .nav-container {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 1rem;
-            }
-
-            .logo-img {
-                width: 100px;
-                max-height: 50px;
-            }
-
-            .nav-clock {
-                order: 3;
-                width: 100%;
-                justify-content: center;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-
-            h1 {
-                font-size: 3rem;
-            }
-
-            .hero p {
-                font-size: 1.2rem;
-            }
-
-            table {
-                font-size: 0.9rem;
-            }
-
-            th, td {
-                padding: 1rem;
-            }
-            
-            .welcome-title {
-                font-size: 2.5rem;
-            }
-            
-            .welcome-card {
-                padding: 2rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .logo-img {
-                width: 80px;
-                max-height: 40px;
-            }
-
-            .nav-clock {
-                padding: 0.5rem 1rem;
-            }
-
-            .clock-time {
-                font-size: 1rem;
-            }
-
-            .clock-date {
-                font-size: 0.8rem;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free Minecraft Launcher for Windows | Neather Launcher</title>
+<meta name="description" content="Neather Launcher is a free Minecraft launcher for Windows & Linux. High FPS, mods, skins & servers. No sign-up, no paywall. Download now.">
+<meta name="theme-color" content="#0F280E">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+<!-- Note: X-Content-Type-Options / Permissions-Policy / frame-ancestors are
+     HTTP-header-only and intentionally omitted: GitHub Pages serves no custom
+     headers, and equivalent <meta> tags are ignored by browsers. CSP below
+     IS enforced via meta; clickjacking is mitigated by JS frame-busting. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self' mailto:; img-src 'self' https: data: blob:; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.github.com; upgrade-insecure-requests">
+<meta property="og:title" content="Neather Launcher — Free Minecraft Launcher">
+<meta property="og:description" content="Fast, free Minecraft launcher for Windows & Linux. High FPS, mods, skins & servers. No account. No paywall.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://neatherlauncher.github.io/">
+<meta property="og:site_name" content="Neather Launcher">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://neatherlauncher.github.io/assets/neather-launcher-home.png">
+<meta property="og:image:alt" content="Neather Launcher home screen — free Minecraft launcher">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Neather Launcher — Free Minecraft Launcher">
+<meta name="twitter:description" content="Fast, free Minecraft launcher for Windows & Linux. No account. No paywall.">
+<meta name="twitter:image" content="https://neatherlauncher.github.io/assets/neather-launcher-home.png">
+<link rel="canonical" href="https://neatherlauncher.github.io/">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Neather Launcher","applicationCategory":"GameApplication","operatingSystem":["Windows 10","Windows 11","Linux"],"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"description":"Free Minecraft launcher with high FPS, modloaders, skins, and Paper & Fabric server support. No sign-up, no paywall.","url":"https://neatherlauncher.github.io/","downloadUrl":"https://github.com/neatherlauncher/neatherlauncher.github.io/releases","author":{"@type":"Person","name":"Shahriar Mahmud"},"isAccessibleForFree":true}
+</script>
 </head>
-<body>
-    <div class="bg-animation"></div>
-    <div class="particles" id="particles"></div>
-    <div class="orb orb1"></div>
-    <div class="orb orb2"></div>
-    <div class="orb orb3"></div>
-    <div class="grid-overlay"></div>
+<body data-dim="overworld">
 
-    <nav>
-        <div class="nav-container">
-            <img src="assets/logo.png" alt="Neather Launcher Logo" class="logo-img">
-            <div class="nav-clock">
-                <i data-lucide="clock" class="clock-icon"></i>
-                <div>
-                    <div class="clock-time" id="clockTime">Loading...</div>
-                    <div class="clock-date" id="clockDate">Loading...</div>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Download Warning Modal -->
-    <div class="download-warning-modal" id="downloadWarningModal">
-        <div class="warning-content">
-            <div class="warning-icon">
-                <i data-lucide="alert-triangle"></i>
-            </div>
-            <h2>Beta Testing Version</h2>
-            <p class="warning-text">
-                This version is a beta testing release and may contain some bugs. 
-                <br><br>
-                <strong>Please disable Windows Defender or your antivirus software before installing.</strong>
-                <br><br>
-                Do you want to proceed with the download?
-            </p>
-            <div class="warning-buttons">
-                <button class="warning-btn warning-btn-download" id="proceedDownload">
-                    <i data-lucide="download" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; margin-right: 8px;"></i>
-                    Download Anyway
-                </button>
-                <button class="warning-btn warning-btn-cancel" id="cancelDownload">Cancel</button>
-            </div>
-        </div>
+<!-- 1 · HOME — the Overworld -->
+<main class="hero" id="home">
+<!-- Navigation sticks with home: logo left, links middle, download right, no bar -->
+<header class="nav">
+  <a href="#home" class="brand" aria-label="Neather Launcher home">
+    <img src="assets/neather-launcher-logo.png" alt="Neather Launcher — free Minecraft launcher" width="306" height="132">
+  </a>
+  <nav aria-label="Primary">
+    <ul class="nav-links">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#new">Features</a></li>
+      <li><a href="#versions">Versions</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+  </nav>
+  <div class="nav-actions">
+    <div class="sponsor-wrap">
+      <button class="sponsor-btn" id="sponsorBtn" aria-haspopup="true" aria-expanded="false" aria-controls="sponsorMenu"><svg class="ico ico-sponsor" viewBox="0 0 512 512" aria-hidden="true"><path fill="currentColor" d="M512,160.899c0-28.316-11.028-54.938-31.05-74.961c-41.334-41.334-108.587-41.333-149.919,0l-29.096,29.096 c-4.548-1.422-9.2-2.417-13.896-2.988c-24.621-14.247-56.01-16.601-81.862-6.4l-25.205-25.206 c-20.023-20.023-46.645-31.05-74.96-31.05S51.072,60.418,31.051,80.44C11.027,100.463,0,127.084,0,155.4 s11.027,54.937,31.049,74.96l68.235,68.235c-1.582,1.133-3.095,2.402-4.515,3.822l-9.892,9.892 c-6.812,6.812-10.565,15.87-10.565,25.504c0,9.634,3.753,18.692,10.565,25.504c6.812,6.813,15.87,10.565,25.504,10.565 c1.245,0,2.481-0.066,3.704-0.19c-1.062,10.422,2.388,21.221,10.356,29.189c7.032,7.032,16.269,10.548,25.505,10.548 c2.839,0,5.677-0.336,8.451-0.999c0.111,9.472,3.845,18.361,10.554,25.07c6.812,6.813,15.87,10.565,25.504,10.565 c4.338,0,8.557-0.767,12.508-2.225l5.648,5.648c7.36,7.36,17.149,11.123,26.823,11.123c8.045,0,16.012-2.604,22.431-7.905 c7.728-6.383,12.483-15.702,13.101-25.636c11.658,3.902,24.804,2.03,34.454-5.939c7.66-6.326,12.399-15.536,13.083-25.371 c11.764,4.092,25.112,2.275,34.881-5.793c7.67-6.335,12.411-15.561,13.086-25.41c11.749,4.065,25.066,2.239,34.817-5.816 c7.862-6.494,12.647-16.025,13.129-26.151c0.465-9.765-3.091-19.33-9.767-26.428l72.301-72.301 C500.973,215.837,512,189.215,512,160.899z M397.225,296.695l-117.14-117.14 l4.169-4.169c3.16-3.161,3.16-8.285,0-11.444c-3.161-3.16-8.285-3.16-11.444,0l-59.347,59.347c-7.753,7.753-20.368,7.752-28.12,0 c-7.753-7.753-7.753-20.367,0-28.12l49.456-49.456c24.115-24.114,63.351-24.114,87.467,0c3.16,3.16,8.285,3.16,11.444,0 c3.161-3.161,3.161-8.285,0-11.444c-4.858-4.858-10.206-8.931-15.881-12.238l24.646-24.646c35.022-35.021,92.008-35.022,127.031,0 c35.022,35.022,35.022,92.008,0,127.031L397.225,296.695z"/></svg> <span>Sponsor</span></button>
+      <div class="sponsor-menu" id="sponsorMenu" hidden>
+        <span class="sponsor-title">Support Neather Launcher</span>
+        <a class="sponsor-link" href="mailto:shahriar.developer111@gmail.com"><img class="sponsor-ico" src="assets/n6b4v7yz.svg" alt="" aria-hidden="true">shahriar.developer111@gmail.com</a>
+        <a class="sponsor-link" href="https://www.facebook.com/shahriar.mahmud.5686" target="_blank" rel="noopener noreferrer"><img class="sponsor-ico" src="assets/k2d8f6hs.svg" alt="" aria-hidden="true">https://www.facebook.com/shahriar.mahmud.5686</a>
+      </div>
     </div>
+    <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">☰</button>
+  </div>
+</header>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#home">Home</a>
+  <a href="#new">Features</a>
+  <a href="#versions">Versions</a>
+  <a href="#about">About</a>
+</div>
+  <div class="grid-bg" aria-hidden="true"><canvas id="mcBg"></canvas></div>
 
-    <main>
-        <!-- EMPTY SPACER (Makes top look empty until scroll) -->
-        <div class="empty-scroll-spacer">
-            <div class="scroll-hint">
-                <span class="scroll-text">Scroll to Explore</span>
-                <i data-lucide="chevron-down" class="scroll-icon"></i>
-            </div>
+  <section class="content">
+  <div class="hero-panel">
+    <span class="badge"><svg class="cube" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M11.5144 1.12584C11.8164 0.958052 12.1836 0.958052 12.4856 1.12584L21.4845 6.12522C21.4921 6.12942 21.4996 6.13372 21.5071 6.13813C21.8125 6.31781 22 6.64568 22 7V17C22 17.3632 21.8031 17.6978 21.4856 17.8742L12.4856 22.8742C12.1791 23.0445 11.8059 23.0416 11.5022 22.8673L2.51436 17.874C2.19689 17.6977 2 17.3631 2 16.9999V7C2 6.64568 2.18749 6.3177 2.49287 6.13802L2.5073 6.13784L2.51436 6.12584L11.5144 1.12584ZM12.0001 10.856L5.05923 6.99995L12 3.14396L18.9409 7L12.0001 10.856ZM4 8.69951V16.4115L11 20.3004V12.5884L4 8.69951ZM13 12.5884V20.3005L20 16.4116V8.69951L13 12.5884Z"/></svg> <span id="heroVersionText">v0.0.1 stable</span></span>
+    <h1><span>A Minecraft launcher built by a player,</span> <span class="hl">shaped by the wishes of players.</span></h1>
+    <p class="sub"><strong>Neather Launcher</strong> is a fast, feature-rich Minecraft launcher built for players — with high FPS, server support, useful tools, mod store support, and a better UI. <strong>Completely free. No account. No paywall.</strong></p>
+    <div class="cta">
+      <span class="trail trail-left" aria-hidden="true"></span>
+      <a href="https://github.com/neatherlauncher/neatherlauncher.github.io/releases/download/v0.0.1/Neather-Launcher-0.0.1-win-x64-Portable.zip" rel="noopener noreferrer" data-dl="hero" class="btn btn-lime btn-lg"><svg class="ico ico-download" viewBox="0 0 1920 1920" aria-hidden="true"><path fill="currentColor" d="M1764.098 1355.412 1920 1511.314l-363.073 363.073H363.073L0 1511.314l155.902-155.902 298.463 298.463h1011.27l298.463-298.463ZM1070.333 0v949.967l250.502-250.612 155.902 155.902-518.975 518.975-518.976-518.975 155.902-155.902 255.023 255.022V0h220.622Z"/></svg> Download for Free</a>
+      <a href="#versions" class="btn btn-outline btn-lg">All versions</a>
+      <span class="trail trail-right" aria-hidden="true"></span>
+    </div>
+    <p class="os-hint"><span id="osHintText">Windows 10 / 11 v0.0.1</span></p>
+  </div>
+  </section>
+
+  <aside class="users-card" aria-label="Downloads">
+    <div class="label"><svg class="cube" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M11.5144 1.12584C11.8164 0.958052 12.1836 0.958052 12.4856 1.12584L21.4845 6.12522C21.4921 6.12942 21.4996 6.13372 21.5071 6.13813C21.8125 6.31781 22 6.64568 22 7V17C22 17.3632 21.8031 17.6978 21.4856 17.8742L12.4856 22.8742C12.1791 23.0445 11.8059 23.0416 11.5022 22.8673L2.51436 17.874C2.19689 17.6977 2 17.3631 2 16.9999V7C2 6.64568 2.18749 6.3177 2.49287 6.13802L2.5073 6.13784L2.51436 6.12584L11.5144 1.12584ZM12.0001 10.856L5.05923 6.99995L12 3.14396L18.9409 7L12.0001 10.856ZM4 8.69951V16.4115L11 20.3004V12.5884L4 8.69951ZM13 12.5884V20.3005L20 16.4116V8.69951L13 12.5884Z"/></svg>Downloads</div>
+    <div class="row">
+      <span class="count" id="downloadCount" data-download-counter>0</span>
+      <div class="avatars" aria-hidden="true">
+        <img src="https://mc-heads.net/avatar/Steve/32" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.style.display='none'">
+        <img src="https://mc-heads.net/avatar/Alex/32" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.style.display='none'">
+        <img src="https://mc-heads.net/avatar/Notch/32" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.style.display='none'">
+      </div>
+    </div>
+  </aside>
+
+  <div class="os-switch" role="group" aria-label="Choose platform">
+    <button type="button" data-os="windows" aria-pressed="true"><svg class="ico ico-windows" viewBox="0 0 1920 1920" aria-hidden="true"><path fill="currentColor" d="m677.647 1642.605-564.706-78.268V1129.4h564.706v513.205Zm56.47-626.146H56.472c-31.172 0-56.471 25.3-56.471 56.47v540.537c0 28.236 20.781 52.066 48.79 55.906l677.648 93.967c2.484.452 5.195.565 7.68.565 13.553 0 26.654-4.856 37.044-13.892 12.31-10.73 19.426-26.202 19.426-42.579V1072.93c0-31.172-25.299-56.47-56.47-56.47Zm37.045-846.483c-12.31-10.729-28.574-15.811-44.724-13.327L48.79 250.616C20.78 254.456 0 278.287 0 306.522V847.06c0 31.172 25.299 56.47 56.47 56.47h677.648c31.171 0 56.47-25.298 56.47-56.47V212.555c0-16.376-7.115-31.85-19.426-42.579Zm-93.515 620.612H112.941V355.652l564.706-78.268v513.204Zm1223.04-776.583c-12.198-10.843-28.8-15.7-44.725-13.553l-903.53 123.332c-28.008 3.84-48.903 27.783-48.903 56.018V847.06c0 31.172 25.3 56.47 56.471 56.47h903.53c31.171 0 56.47-25.298 56.47-56.47V56.47c0-16.377-7.115-31.85-19.313-42.466Zm-93.628 776.583H1016.47V229.045l790.588-107.86v669.403Zm56.47 225.905H960c-31.172 0-56.47 25.186-56.47 56.47v667.257c0 28.236 20.894 52.066 48.903 56.02l903.53 123.218c2.484.339 5.082.565 7.566.565 13.553 0 26.767-4.97 37.158-14.005 12.198-10.73 19.313-26.202 19.313-42.466v-790.588c0-31.285-25.299-56.47-56.47-56.47Zm-56.47 782.344-790.588-107.972v-561.43h790.588v669.402Z"/></svg>Windows</button>
+    <button type="button" data-os="linux" aria-pressed="false"><svg class="ico ico-linux" viewBox="0 0 15 15" aria-hidden="true"><path fill="currentColor" d="M4.53918 2.40715C4.82145 1.0075 6.06066 0 7.49996 0C8.93926 0 10.1785 1.0075 10.4607 2.40715L10.798 4.07944C10.9743 4.9539 11.3217 5.78562 11.8205 6.52763L12.4009 7.39103C12.7631 7.92978 12.9999 8.5385 13.0979 9.17323C13.6747 9.22167 14.1803 9.58851 14.398 10.1283L14.8897 11.3474C15.1376 11.962 14.9583 12.665 14.4455 13.0887L12.5614 14.6458C12.0128 15.0992 11.2219 15.1193 10.6506 14.6944L9.89192 14.1301C9.88189 14.1227 9.87197 14.1151 9.86216 14.1074C9.48973 14.2075 9.09793 14.261 8.69355 14.261H6.30637C5.90201 14.261 5.51023 14.2076 5.13782 14.1074C5.12802 14.1151 5.11811 14.1227 5.10808 14.1301L4.34942 14.6944C3.77811 15.1193 2.98725 15.0992 2.43863 14.6458L0.55446 13.0887C0.0417175 12.665 -0.1376 11.962 0.110281 11.3474L0.602025 10.1283C0.819715 9.58854 1.32527 9.2217 1.90198 9.17324C2 8.5385 2.2368 7.92978 2.59897 7.39103L3.17938 6.52763C3.67818 5.78562 4.02557 4.9539 4.20193 4.07944L4.53918 2.40715ZM10.8445 9.47585C10.6345 9.63293 10.4642 9.84382 10.3561 10.0938L9.58799 11.8713C9.20026 12.0979 8.75209 12.2237 8.28465 12.2237H6.7153C6.24789 12.2237 5.79975 12.0979 5.41203 11.8714L4.64386 10.0938C4.53581 9.8438 4.36552 9.6329 4.15546 9.47582C4.18121 9.15355 4.2689 8.83503 4.41853 8.53826L5.67678 6.04259L5.68433 6.05007C6.68715 7.04458 8.31304 7.04458 9.31585 6.05007L9.32324 6.04274L10.5814 8.53825C10.7311 8.83504 10.8187 9.15357 10.8445 9.47585ZM9.04068 4.26906V3.05592H8.01353V3.85713C8.23151 3.90123 8.44506 3.97371 8.64848 4.07458L9.04068 4.26906ZM6.98638 3.85718V3.05592H5.95923V4.26919L6.3517 4.07458C6.55504 3.97375 6.7685 3.90129 6.98638 3.85718ZM2.03255 10.1864C1.82255 10.1864 1.6337 10.3132 1.55571 10.5066L1.06397 11.7257C0.981339 11.9306 1.04111 12.1649 1.21203 12.3062L3.0962 13.8633C3.27907 14.0144 3.54269 14.0211 3.73313 13.8795L4.49179 13.3152C4.6813 13.1743 4.74901 12.923 4.6557 12.7071L3.69976 10.4951C3.61884 10.3078 3.43316 10.1864 3.22771 10.1864H2.03255ZM13.4443 10.5066C13.3663 10.3132 13.1775 10.1864 12.9674 10.1864H11.7723C11.5668 10.1864 11.3812 10.3078 11.3002 10.4951L10.3443 12.7071C10.251 12.923 10.3187 13.1743 10.5082 13.3152L11.2669 13.8795C11.4573 14.0211 11.7209 14.0144 11.9038 13.8633L13.788 12.3062C13.9589 12.1649 14.0187 11.9306 13.936 11.7257L13.4443 10.5066ZM6.81106 4.98568C7.24481 4.7706 7.75537 4.7706 8.18912 4.98568L8.68739 5.23275L8.58955 5.32978C7.98786 5.92649 7.01232 5.92649 6.41063 5.32978L6.31279 5.23275L6.81106 4.98568Z"/></svg>Linux</button>
+  </div>
+</main>
+
+<div class="page">
+
+  <!-- 2 · FEATURES — the Cave -->
+  <section class="section" id="new">
+    <div class="sec-bg" aria-hidden="true"><canvas id="caveBg"></canvas></div>
+    <div class="wrap wrap-features">
+      <div class="section-head section-head-center">
+        <span class="badge"><svg class="cube" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M11.5144 1.12584C11.8164 0.958052 12.1836 0.958052 12.4856 1.12584L21.4845 6.12522C21.4921 6.12942 21.4996 6.13372 21.5071 6.13813C21.8125 6.31781 22 6.64568 22 7V17C22 17.3632 21.8031 17.6978 21.4856 17.8742L12.4856 22.8742C12.1791 23.0445 11.8059 23.0416 11.5022 22.8673L2.51436 17.874C2.19689 17.6977 2 17.3631 2 16.9999V7C2 6.64568 2.18749 6.3177 2.49287 6.13802L2.5073 6.13784L2.51436 6.12584L11.5144 1.12584ZM12.0001 10.856L5.05923 6.99995L12 3.14396L18.9409 7L12.0001 10.856ZM4 8.69951V16.4115L11 20.3004V12.5884L4 8.69951ZM13 12.5884V20.3005L20 16.4116V8.69951L13 12.5884Z"/></svg> Features</span>
+        <h2>Why players choose Neather.</h2>
+        <p>Eight player-first features — faster FPS, easy accounts, mods, servers and tools.</p>
+      </div>
+
+      <div class="features-showcase">
+        <!-- LEFT -->
+        <div class="feat-col">
+          <button type="button" class="feat is-active" data-shot="assets/neather-launcher-fps-boost.png" data-cap="FPS Boost config — smart Java flags">
+            <span class="icon"><img src="assets/p5t3r9wx.png" alt="Performance icon" loading="lazy"></span>
+            <span class="feat-text"><span class="feat-tag">Performance</span><h3>+15% extra performance</h3></span>
+          </button>
+          <button type="button" class="feat" data-shot="assets/neather-launcher-accounts.png" data-cap="Accounts — offline + Ely.by login">
+            <span class="icon"><img src="assets/b8n3v5xc.png" alt="Accounts icon" loading="lazy"></span>
+            <span class="feat-text"><span class="feat-tag">Accounts</span><h3>Offline + Ely.by support</h3></span>
+          </button>
+          <button type="button" class="feat" data-shot="assets/neather-launcher-home.png" data-cap="Instances — one click per version">
+            <span class="icon"><img src="assets/a3e9k5mn.png" alt="Instances icon" loading="lazy"></span>
+            <span class="feat-text"><span class="feat-tag">Instances</span><h3>Multiple game instances</h3></span>
+          </button>
+          <button type="button" class="feat" data-shot="assets/neather-launcher-home.png" data-cap="Modloaders — pick your loader in one click">
+            <span class="icon"><img src="assets/w9q3m6bk.png" alt="Modloaders icon" loading="lazy"></span>
+            <span class="feat-text"><span class="feat-tag">Mods</span><h3>6 modloaders in one click</h3></span>
+          </button>
         </div>
 
-        <!-- WELCOME CARD (Re-created, reveals on scroll) -->
-        <section class="welcome-section reveal">
-            <div class="welcome-card">
-                <div class="welcome-badge">
-                    <span class="pulse-dot"></span>
-                    <span>System Online</span>
-                </div>
-                <h2 class="welcome-title">Welcome to Neather</h2>
-                <p class="welcome-subtitle">A next-generation Minecraft launcher designed with modern aesthetics and powerful functionality. Built for the community, by the community.</p>
-            </div>
-        </section>
+        <!-- MIDDLE : live screenshot stage -->
+        <div class="feature-stage" aria-live="polite">
+          <figure class="shot stage-main stage-green">
+            <img id="featureShot" src="assets/neather-launcher-home.png" alt="Neather Launcher home screen — free Minecraft launcher" fetchpriority="high">
+            <figcaption id="featureCap">Neather home — clean, fast, green</figcaption>
+          </figure>
+          <div class="stage-bar">
+            <button type="button" class="stage-arrow stage-prev" id="shotPrev" aria-label="Previous screenshot"><img src="assets/j7h2k9lp.svg" alt="Previous"></button>
+            <div class="stage-dots" id="stageDots" role="tablist" aria-label="Screenshots"></div>
+            <span class="stage-count" id="stageCount">1 / 6</span>
+            <button type="button" class="stage-arrow stage-next" id="shotNext" aria-label="Next screenshot"><img src="assets/e5r7t1yu.svg" alt="Next"></button>
+          </div>
+        </div>
 
-        <!-- Hero Section -->
-        <section class="hero reveal">
-            <h1>NEATHER LAUNCHER</h1>
-            <p>Experience Minecraft like never before. Manage mods, optimize performance, and customize everything.</p>
-            <a href="#download" class="cta-button">
-                <i data-lucide="download" style="width: 28px; height: 28px;"></i>
-                GET STARTED
-            </a>
-        </section>
+        <!-- RIGHT -->
+        <div class="feat-col">
+          <button type="button" class="feat" data-shot="assets/neather-launcher-skins.png" data-cap="Skins — apply and preview instantly">
+            <span class="icon"><img src="assets/c9v2b5nm.png" alt="Skin icon" loading="lazy"></span>
+            <span class="feat-text"><span class="feat-tag">Identity</span><h3>Apply &amp; change skins</h3></span>
+          </button>
+          <button type="button" class="feat" data-shot="assets/neather-launcher-servers.png" data-cap="Servers — Paper and Fabric in one click">
+            <span class="icon"><img src="assets/d6f3g9hj.png" alt="Server icon" loading="lazy"></span>
+            <span class="feat-text"><span class="feat-tag">Multiplayer</span><h3>Paper &amp; Fabric servers</h3></span>
+          </button>
+          <button type="button" class="feat" data-shot="assets/neather-launcher-tools.png" data-cap="Tools — gallery + Minecraft calculators">
+            <span class="icon"><img src="assets/r3e5w7qi.png" alt="Tools icon" loading="lazy"></span>
+            <span class="feat-text"><span class="feat-tag">Utilities</span><h3>Minecraft tools section</h3></span>
+          </button>
+          <button type="button" class="feat" data-shot="assets/neather-launcher-home.png" data-cap="Neather home — clean, fast, green">
+            <span class="icon"><img src="assets/o6p8a2sd.png" alt="UI icon" loading="lazy"></span>
+            <span class="feat-text"><span class="feat-tag">Experience</span><h3>Beautiful green UI</h3></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
 
-        <!-- Features Section -->
-        <section id="features" class="reveal">
-            <h2>Features</h2>
-            <div class="features-grid">
-                <div class="feature-card reveal">
-                    <i data-lucide="layout-dashboard" class="feature-icon"></i>
-                    <h3 class="feature-title">Modern UI</h3>
-                    <p class="feature-desc">Beautiful glassmorphic design with smooth animations and intuitive navigation</p>
-                </div>
-                <div class="feature-card reveal">
-                    <i data-lucide="zap" class="feature-icon"></i>
-                    <h3 class="feature-title">Fast Performance</h3>
-                    <p class="feature-desc">Optimized for speed with minimal resource usage and instant game launches</p>
-                </div>
-                <div class="feature-card reveal">
-                    <i data-lucide="puzzle" class="feature-icon"></i>
-                    <h3 class="feature-title">Mod Loaders</h3>
-                    <p class="feature-desc">Full support for Fabric, Forge, Quilt, and Neoforge with one-click installation</p>
-                </div>
-                <div class="feature-card reveal">
-                    <i data-lucide="package" class="feature-icon"></i>
-                    <h3 class="feature-title">Content Manager</h3>
-                    <p class="feature-desc">Download and manage mods, shaders, resource packs, modpacks, datapacks, and worlds</p>
-                </div>
-                <div class="feature-card reveal">
-                    <i data-lucide="globe" class="feature-icon"></i>
-                    <h3 class="feature-title">Online & Local</h3>
-                    <p class="feature-desc">Browse online repositories or manage your local content seamlessly</p>
-                </div>
-            </div>
-        </section>
+  <!-- 3 · VERSIONS — the Nether -->
+  <section class="section" id="versions">
+    <div class="sec-bg" aria-hidden="true"><canvas id="netherBg"></canvas></div>
+    <div class="wrap">
+      <div class="section-head section-head-center">
+        <span class="badge"><svg class="cube" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M11.5144 1.12584C11.8164 0.958052 12.1836 0.958052 12.4856 1.12584L21.4845 6.12522C21.4921 6.12942 21.4996 6.13372 21.5071 6.13813C21.8125 6.31781 22 6.64568 22 7V17C22 17.3632 21.8031 17.6978 21.4856 17.8742L12.4856 22.8742C12.1791 23.0445 11.8059 23.0416 11.5022 22.8673L2.51436 17.874C2.19689 17.6977 2 17.3631 2 16.9999V7C2 6.64568 2.18749 6.3177 2.49287 6.13802L2.5073 6.13784L2.51436 6.12584L11.5144 1.12584ZM12.0001 10.856L5.05923 6.99995L12 3.14396L18.9409 7L12.0001 10.856ZM4 8.69951V16.4115L11 20.3004V12.5884L4 8.69951ZM13 12.5884V20.3005L20 16.4116V8.69951L13 12.5884Z"/></svg> Release</span>
+        <h2>Get it. Keep every version.</h2>
+        <p>All versions available here of Neather Launcher, latest version download recommended</p>
+      </div>
 
-        <!-- Image Slider Section -->
-        <section id="gallery" class="reveal">
-            <h2>Gallery</h2>
-            <div class="slider-container">
-                <div class="slider-wrapper">
-                    <div class="slider-track" id="sliderTrack">
-                        <div class="slide"><img src="assets/Screenshot 2026-02-15 134323.png" alt="Neather Launcher"></div>
-                        <div class="slide"><img src="assets/Screenshot 2026-02-15 134333.png" alt="Neather Launcher"></div>
-                        <div class="slide"><img src="assets/Screenshot 2026-02-15 134350.png" alt="Neather Launcher"></div>
-                        <div class="slide"><img src="assets/Screenshot 2026-02-15 134433.png" alt="Neather Launcher"></div>
-                        <div class="slide"><img src="assets/Screenshot 2026-02-15 134512.png" alt="Neather Launcher"></div>
-                        <div class="slide"><img src="assets/Screenshot 2026-02-15 134542.png" alt="Neather Launcher"></div>
-                    </div>
-                </div>
-                <div class="slider-nav">
-                    <button class="slider-btn" id="prevBtn"><i data-lucide="chevron-left" style="width: 24px; height: 24px;"></i></button>
-                    <div class="slider-dots" id="dotsContainer"></div>
-                    <button class="slider-btn" id="nextBtn"><i data-lucide="chevron-right" style="width: 24px; height: 24px;"></i></button>
-                </div>
-            </div>
-        </section>
+      <div class="dl-bar">
+        <div class="dl-info"><strong id="latestVersionName">v0.0.1 stable</strong><span id="latestVersionMeta">Sep 2026 · 25 MB · Windows Portable (.zip)</span></div>
+        <div class="dl-btns" id="dlBtns">
+          <a class="btn btn-acc" href="https://github.com/neatherlauncher/neatherlauncher.github.io/releases/download/v0.0.1/Neather-Launcher-0.0.1-win-x64-Portable.zip" rel="noopener noreferrer" download><svg class="ico ico-windows" viewBox="0 0 1920 1920" aria-hidden="true"><path fill="currentColor" d="m677.647 1642.605-564.706-78.268V1129.4h564.706v513.205Zm56.47-626.146H56.472c-31.172 0-56.471 25.3-56.471 56.47v540.537c0 28.236 20.781 52.066 48.79 55.906l677.648 93.967c2.484.452 5.195.565 7.68.565 13.553 0 26.654-4.856 37.044-13.892 12.31-10.73 19.426-26.202 19.426-42.579V1072.93c0-31.172-25.299-56.47-56.47-56.47Zm37.045-846.483c-12.31-10.729-28.574-15.811-44.724-13.327L48.79 250.616C20.78 254.456 0 278.287 0 306.522V847.06c0 31.172 25.299 56.47 56.47 56.47h677.648c31.171 0 56.47-25.298 56.47-56.47V212.555c0-16.376-7.115-31.85-19.426-42.579Zm-93.515 620.612H112.941V355.652l564.706-78.268v513.204Zm1223.04-776.583c-12.198-10.843-28.8-15.7-44.725-13.553l-903.53 123.332c-28.008 3.84-48.903 27.783-48.903 56.018V847.06c0 31.172 25.3 56.47 56.471 56.47h903.53c31.171 0 56.47-25.298 56.47-56.47V56.47c0-16.377-7.115-31.85-19.313-42.466Zm-93.628 776.583H1016.47V229.045l790.588-107.86v669.403Zm56.47 225.905H960c-31.172 0-56.47 25.186-56.47 56.47v667.257c0 28.236 20.894 52.066 48.903 56.02l903.53 123.218c2.484.339 5.082.565 7.566.565 13.553 0 26.767-4.97 37.158-14.005 12.198-10.73 19.313-26.202 19.313-42.466v-790.588c0-31.285-25.299-56.47-56.47-56.47Zm-56.47 782.344-790.588-107.972v-561.43h790.588v669.402Z"/></svg> Windows</a>
+          <a class="btn btn-ghost" href="https://github.com/neatherlauncher/neatherlauncher.github.io/releases" rel="noopener noreferrer"><svg class="ico ico-linux" viewBox="0 0 15 15" aria-hidden="true"><path fill="currentColor" d="M4.53918 2.40715C4.82145 1.0075 6.06066 0 7.49996 0C8.93926 0 10.1785 1.0075 10.4607 2.40715L10.798 4.07944C10.9743 4.9539 11.3217 5.78562 11.8205 6.52763L12.4009 7.39103C12.7631 7.92978 12.9999 8.5385 13.0979 9.17323C13.6747 9.22167 14.1803 9.58851 14.398 10.1283L14.8897 11.3474C15.1376 11.962 14.9583 12.665 14.4455 13.0887L12.5614 14.6458C12.0128 15.0992 11.2219 15.1193 10.6506 14.6944L9.89192 14.1301C9.88189 14.1227 9.87197 14.1151 9.86216 14.1074C9.48973 14.2075 9.09793 14.261 8.69355 14.261H6.30637C5.90201 14.261 5.51023 14.2076 5.13782 14.1074C5.12802 14.1151 5.11811 14.1227 5.10808 14.1301L4.34942 14.6944C3.77811 15.1193 2.98725 15.0992 2.43863 14.6458L0.55446 13.0887C0.0417175 12.665 -0.1376 11.962 0.110281 11.3474L0.602025 10.1283C0.819715 9.58854 1.32527 9.2217 1.90198 9.17324C2 8.5385 2.2368 7.92978 2.59897 7.39103L3.17938 6.52763C3.67818 5.78562 4.02557 4.9539 4.20193 4.07944L4.53918 2.40715ZM10.8445 9.47585C10.6345 9.63293 10.4642 9.84382 10.3561 10.0938L9.58799 11.8713C9.20026 12.0979 8.75209 12.2237 8.28465 12.2237H6.7153C6.24789 12.2237 5.79975 12.0979 5.41203 11.8714L4.64386 10.0938C4.53581 9.8438 4.36552 9.6329 4.15546 9.47582C4.18121 9.15355 4.2689 8.83503 4.41853 8.53826L5.67678 6.04259L5.68433 6.05007C6.68715 7.04458 8.31304 7.04458 9.31585 6.05007L9.32324 6.04274L10.5814 8.53825C10.7311 8.83504 10.8187 9.15357 10.8445 9.47585ZM9.04068 4.26906V3.05592H8.01353V3.85713C8.23151 3.90123 8.44506 3.97371 8.64848 4.07458L9.04068 4.26906ZM6.98638 3.85718V3.05592H5.95923V4.26919L6.3517 4.07458C6.55504 3.97375 6.7685 3.90129 6.98638 3.85718ZM2.03255 10.1864C1.82255 10.1864 1.6337 10.3132 1.55571 10.5066L1.06397 11.7257C0.981339 11.9306 1.04111 12.1649 1.21203 12.3062L3.0962 13.8633C3.27907 14.0144 3.54269 14.0211 3.73313 13.8795L4.49179 13.3152C4.6813 13.1743 4.74901 12.923 4.6557 12.7071L3.69976 10.4951C3.61884 10.3078 3.43316 10.1864 3.22771 10.1864H2.03255ZM13.4443 10.5066C13.3663 10.3132 13.1775 10.1864 12.9674 10.1864H11.7723C11.5668 10.1864 11.3812 10.3078 11.3002 10.4951L10.3443 12.7071C10.251 12.923 10.3187 13.1743 10.5082 13.3152L11.2669 13.8795C11.4573 14.0211 11.7209 14.0144 11.9038 13.8633L13.788 12.3062C13.9589 12.1649 14.0187 11.9306 13.936 11.7257L13.4443 10.5066ZM6.81106 4.98568C7.24481 4.7706 7.75537 4.7706 8.18912 4.98568L8.68739 5.23275L8.58955 5.32978C7.98786 5.92649 7.01232 5.92649 6.41063 5.32978L6.31279 5.23275L6.81106 4.98568Z"/></svg>Linux</a>
+        </div>
+      </div>
 
-        <!-- Download Section -->
-        <section id="download" class="download-section reveal">
-            <h2>Download</h2>
-            <div class="glass-card" style="margin-top: 2rem;">
-                <p style="font-size: 1.3rem; margin-bottom: 2rem; color: var(--text-secondary);">
-                    Get the latest version of Neather Launcher and start your enhanced Minecraft journey today!
-                </p>
-                <a href="#" class="download-btn" id="mainDownloadBtn">
-                    <i data-lucide="download" class="download-icon"></i>
-                    DOWNLOAD FOR WINDOWS
-                </a>
-                <p class="download-note">
-                    <i data-lucide="monitor" style="width: 20px; height: 20px;"></i>
-                    Windows 10/11 Compatible
-                </p>
-            </div>
-        </section>
+      <div class="releases-wrap">
+        <div class="releases-toolbar">
+          <input id="releaseSearch" type="search" placeholder="Search versions… (e.g. 1.0, 1.1)" aria-label="Search releases">
+          <span class="releases-count" id="releaseCount" role="status">Loading releases…</span>
+        </div>
+        <div class="table-scroll">
+          <table class="releases">
+            <thead><tr><th>Version</th><th>Date &amp; size</th><th>Notes</th><th><span class="sr-only">Download</span></th></tr></thead>
+            <tbody id="releasesBody"><tr><td colspan="4" class="empty">Loading releases from GitHub…</td></tr></tbody>
+          </table>
+          <noscript><p class="noscript-note">Neather Launcher v0.0.1 stable for Windows (Portable .zip, ~25 MB, Sep 2026). Browse and download all versions at <a href="https://github.com/neatherlauncher/neatherlauncher.github.io/releases">GitHub Releases</a>.</p></noscript>
+        </div>
+      </div>
+      <p class="mini-note">Need Android? <a id="dlAndroid" href="https://github.com/neatherlauncher/neatherlauncher.github.io/releases" rel="noopener noreferrer">Grab the .APK</a>. Java installs automatically. Minimum: dual-core CPU, 4 GB RAM.</p>
+    </div>
+  </section>
 
-        <!-- Versions Section -->
-        <section id="versions" class="reveal">
-            <h2>All Versions</h2>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th><i data-lucide="tag" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Version</th>
-                            <th><i data-lucide="calendar" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Release Date</th>
-                            <th><i data-lucide="file-text" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Notes</th>
-                            <th><i data-lucide="download" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>Download</th>
-                        </tr>
-                    </thead>
-                    <tbody id="versionsTableBody">
-                        <tr>
-                            <td><strong style="color: var(--primary-green);">NLV 0.1v</strong></td>
-                            <td><em>February 15, 2026</em></td>
-                            <td>First public release - Initial glassmorphic UI, mod loader support, and content management</td>
-                            <td>
-                                <button class="warning-btn warning-btn-download version-download-btn" style="padding: 0.6rem 1.2rem; font-size: 1rem;">
-                                    <i data-lucide="download" style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 6px;"></i>
-                                    Download
-                                </button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-    </main>
+  <!-- 4 · ABOUT + HOW TO PLAY — the End -->
+  <section class="section" id="about">
+    <div class="sec-bg" aria-hidden="true"><canvas id="endBg"></canvas></div>
+    <div class="wrap">
+      <div class="about-grid">
+        <div>
+          <span class="badge"><svg class="cube" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M11.5144 1.12584C11.8164 0.958052 12.1836 0.958052 12.4856 1.12584L21.4845 6.12522C21.4921 6.12942 21.4996 6.13372 21.5071 6.13813C21.8125 6.31781 22 6.64568 22 7V17C22 17.3632 21.8031 17.6978 21.4856 17.8742L12.4856 22.8742C12.1791 23.0445 11.8059 23.0416 11.5022 22.8673L2.51436 17.874C2.19689 17.6977 2 17.3631 2 16.9999V7C2 6.64568 2.18749 6.3177 2.49287 6.13802L2.5073 6.13784L2.51436 6.12584L11.5144 1.12584ZM12.0001 10.856L5.05923 6.99995L12 3.14396L18.9409 7L12.0001 10.856ZM4 8.69951V16.4115L11 20.3004V12.5884L4 8.69951ZM13 12.5884V20.3005L20 16.4116V8.69951L13 12.5884Z"/></svg> About Neather</span>
+          <h2>By players,<br>for players.</h2>
+          <p class="muted">Neather Launcher is a free, reliable, and user-focused Minecraft launcher — built to give players a simple and trustworthy way to manage and play Minecraft. Independently developed with a focus on stability, performance, privacy, and a smooth user experience.</p>
+          <p class="muted">One place for version management, mods, resource packs, instances, and Minecraft customization tools — from 1.0 to the latest release. Free forever, no subscriptions, no paywalled features. Source code is proprietary and not publicly distributed.</p>
+          <p class="about-credit">Independently created and maintained by <strong>Shahriar Mahmud</strong> — built on testing, user feedback, and what the community actually needs.</p>
+          <div class="stats">
+            <div><b id="aboutDownloads" data-download-counter>0</b><small>downloads</small></div>
+            <div><b id="aboutVersions" data-versions-counter>0</b><small>versions</small></div>
+          </div>
+        </div>
+        <div class="how">
+          <h3>How to play <span>— 3 steps, no sign-up</span></h3>
+          <ol>
+            <li><b>1</b> Download for your OS above.</li>
+            <li><b>2</b> Create an instance — pick version + loader.</li>
+            <li><b>3</b> Set a name, hit Play.</li>
+          </ol>
+          <div class="faq">
+            <details open><summary>Really free? No sign-up?</summary><p>Yes. No accounts, no paywall. Download and play.</p></details>
+            <details><summary>Do I need a Mojang account?</summary><p>No. Offline auth by default; Microsoft login optional.</p></details>
+            <details><summary>Is it safe?</summary><p>VirusTotal-clean. Offline/LAN servers work; premium-only servers still need a paid account.</p></details>
+            <details><summary>Which Minecraft versions and modloaders are supported?</summary><p>From classic 1.0 to the latest release — one instance per version, with 6 modloaders available in one click.</p></details>
+            <details><summary>Which platforms are supported?</summary><p>Windows 10 and 11 today, with Linux builds published alongside releases. Check the Versions section for the latest downloads.</p></details>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <footer>
-        <p style="margin-bottom: 1.2rem; font-size: 1.2rem; color: var(--text-secondary);">
-            Open Source • Made with <i data-lucide="heart" style="width: 18px; height: 18px; display: inline-block; vertical-align: middle; color: var(--primary-green);"></i> for the Minecraft Community
-        </p>
-    </footer>
+  <div class="cta-strip" id="get">
+    <div><h2>Your next world is one click away.</h2><p>Free · No sign-up · <span id="ctaDownloads">0</span> players</p></div>
+    <div class="sponsor-wrap">
+      <button class="btn btn-dark btn-lg" id="sponsorBtnBottom" aria-haspopup="true" aria-expanded="false" aria-controls="sponsorMenuBottom"><svg class="ico ico-sponsor" viewBox="0 0 512 512" aria-hidden="true"><path fill="currentColor" d="M512,160.899c0-28.316-11.028-54.938-31.05-74.961c-41.334-41.334-108.587-41.333-149.919,0l-29.096,29.096 c-4.548-1.422-9.2-2.417-13.896-2.988c-24.621-14.247-56.01-16.601-81.862-6.4l-25.205-25.206 c-20.023-20.023-46.645-31.05-74.96-31.05S51.072,60.418,31.051,80.44C11.027,100.463,0,127.084,0,155.4 s11.027,54.937,31.049,74.96l68.235,68.235c-1.582,1.133-3.095,2.402-4.515,3.822l-9.892,9.892 c-6.812,6.812-10.565,15.87-10.565,25.504c0,9.634,3.753,18.692,10.565,25.504c6.812,6.813,15.87,10.565,25.504,10.565 c1.245,0,2.481-0.066,3.704-0.19c-1.062,10.422,2.388,21.221,10.356,29.189c7.032,7.032,16.269,10.548,25.505,10.548 c2.839,0,5.677-0.336,8.451-0.999c0.111,9.472,3.845,18.361,10.554,25.07c6.812,6.813,15.87,10.565,25.504,10.565 c4.338,0,8.557-0.767,12.508-2.225l5.648,5.648c7.36,7.36,17.149,11.123,26.823,11.123c8.045,0,16.012-2.604,22.431-7.905 c7.728-6.383,12.483-15.702,13.101-25.636c11.658,3.902,24.804,2.03,34.454-5.939c7.66-6.326,12.399-15.536,13.083-25.371 c11.764,4.092,25.112,2.275,34.881-5.793c7.67-6.335,12.411-15.561,13.086-25.41c11.749,4.065,25.066,2.239,34.817-5.816 c7.862-6.494,12.647-16.025,13.129-26.151c0.465-9.765-3.091-19.33-9.767-26.428l72.301-72.301 C500.973,215.837,512,189.215,512,160.899z M397.225,296.695l-117.14-117.14 l4.169-4.169c3.16-3.161,3.16-8.285,0-11.444c-3.161-3.16-8.285-3.16-11.444,0l-59.347,59.347c-7.753,7.753-20.368,7.752-28.12,0 c-7.753-7.753-7.753-20.367,0-28.12l49.456-49.456c24.115-24.114,63.351-24.114,87.467,0c3.16,3.16,8.285,3.16,11.444,0 c3.161-3.161,3.161-8.285,0-11.444c-4.858-4.858-10.206-8.931-15.881-12.238l24.646-24.646c35.022-35.021,92.008-35.022,127.031,0 c35.022,35.022,35.022,92.008,0,127.031L397.225,296.695z"/></svg> Sponsor</button>
+      <div class="sponsor-menu" id="sponsorMenuBottom" hidden>
+        <span class="sponsor-title">Support Neather Launcher</span>
+        <a class="sponsor-link" href="mailto:shahriar.developer111@gmail.com"><img class="sponsor-ico" src="assets/n6b4v7yz.svg" alt="" aria-hidden="true">shahriar.developer111@gmail.com</a>
+        <a class="sponsor-link" href="https://www.facebook.com/shahriar.mahmud.5686" target="_blank" rel="noopener noreferrer"><img class="sponsor-ico" src="assets/k2d8f6hs.svg" alt="" aria-hidden="true">https://www.facebook.com/shahriar.mahmud.5686</a>
+      </div>
+    </div>
+  </div>
 
-    <script>
-        lucide.createIcons();
+  <footer>
+    <span>© <span id="year">2026</span> Neather Launcher · Not affiliated with Mojang / Microsoft.</span>
+    <span class="flinks"><a href="#new">Features</a><a href="#versions">Versions</a><a href="#about">About</a></span>
+  </footer>
+</div>
 
-        // Real-time Clock using multiple fallback APIs
-        let clockInterval;
-        
-        async function updateClockFromAPI() {
-            try {
-                // Try primary API
-                const response = await fetch('https://timeapi.io/api/Time/current/zone?timeZone=UTC');
-                const data = await response.json();
-                
-                // Parse the datetime from the API
-                const datetime = new Date(data.dateTime);
-                
-                const timeString = datetime.toLocaleTimeString('en-US', { 
-                    hour: '2-digit', 
-                    minute: '2-digit', 
-                    second: '2-digit',
-                    hour12: false 
-                });
-                
-                const dateString = datetime.toLocaleDateString('en-US', { 
-                    weekday: 'short',
-                    month: 'short', 
-                    day: 'numeric',
-                    year: 'numeric'
-                });
-                
-                document.getElementById('clockTime').textContent = timeString;
-                document.getElementById('clockDate').textContent = dateString;
-                
-                // Store the offset from local time for continuous updates
-                window.timeOffset = datetime.getTime() - Date.now();
-                
-            } catch (error) {
-                console.error('Primary API failed, trying fallback:', error);
-                try {
-                    // Fallback to worldtimeapi
-                    const response = await fetch('https://worldtimeapi.org/api/timezone/Etc/UTC');
-                    const data = await response.json();
-                    const datetime = new Date(data.datetime);
-                    
-                    const timeString = datetime.toLocaleTimeString('en-US', { 
-                        hour: '2-digit', 
-                        minute: '2-digit', 
-                        second: '2-digit',
-                        hour12: false 
-                    });
-                    
-                    const dateString = datetime.toLocaleDateString('en-US', { 
-                        weekday: 'short',
-                        month: 'short', 
-                        day: 'numeric',
-                        year: 'numeric'
-                    });
-                    
-                    document.getElementById('clockTime').textContent = timeString;
-                    document.getElementById('clockDate').textContent = dateString;
-                    
-                    window.timeOffset = datetime.getTime() - Date.now();
-                    
-                } catch (fallbackError) {
-                    console.error('All time APIs failed, using local time:', fallbackError);
-                    // Use local time as last resort
-                    updateClockLocal();
-                }
-            }
-        }
-        
-        function updateClockLocal() {
-            const now = window.timeOffset ? new Date(Date.now() + window.timeOffset) : new Date();
-            
-            const timeString = now.toLocaleTimeString('en-US', { 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit',
-                hour12: false 
-            });
-            
-            const dateString = now.toLocaleDateString('en-US', { 
-                weekday: 'short',
-                month: 'short', 
-                day: 'numeric',
-                year: 'numeric'
-            });
-            
-            document.getElementById('clockTime').textContent = timeString;
-            document.getElementById('clockDate').textContent = dateString;
-        }
+<div class="lightbox" id="lightbox" role="dialog" aria-label="Screenshot preview">
+  <button aria-label="Close">✕</button>
+  <img id="lightboxImg" src="" alt="Screenshot preview">
+</div>
 
-        // Initial API call
-        updateClockFromAPI();
-        
-        // Update display every second using local calculation
-        clockInterval = setInterval(updateClockLocal, 1000);
-        
-        // Refresh from API every 10 minutes to stay accurate
-        setInterval(updateClockFromAPI, 600000);
-
-        // Download Warning Modal
-        const downloadWarningModal = document.getElementById('downloadWarningModal');
-        const mainDownloadBtn = document.getElementById('mainDownloadBtn');
-        const proceedDownloadBtn = document.getElementById('proceedDownload');
-        const cancelDownloadBtn = document.getElementById('cancelDownload');
-        const versionDownloadBtns = document.querySelectorAll('.version-download-btn');
-
-        // Show warning modal when clicking download
-        mainDownloadBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            downloadWarningModal.classList.add('active');
-            lucide.createIcons();
-        });
-
-        // Also add to version table download buttons
-        versionDownloadBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                downloadWarningModal.classList.add('active');
-                lucide.createIcons();
-            });
-        });
-
-        // Proceed with download
-        proceedDownloadBtn.addEventListener('click', () => {
-            // Create a temporary link to trigger download
-            const link = document.createElement('a');
-            link.href = 'Launcher.zip'; // The zip file in the same directory
-            link.download = 'Launcher.zip';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            // Close modal
-            downloadWarningModal.classList.remove('active');
-        });
-
-        // Cancel download
-        cancelDownloadBtn.addEventListener('click', () => {
-            downloadWarningModal.classList.remove('active');
-        });
-
-        // Close modal when clicking outside
-        downloadWarningModal.addEventListener('click', (e) => {
-            if (e.target === downloadWarningModal) {
-                downloadWarningModal.classList.remove('active');
-            }
-        });
-
-        function createParticles() {
-            const particles = document.getElementById('particles');
-            for (let i = 0; i < 30; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                const size = Math.random() * 4 + 2;
-                particle.style.width = size + 'px';
-                particle.style.height = size + 'px';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDuration = (Math.random() * 15 + 10) + 's';
-                particle.style.animationDelay = Math.random() * 10 + 's';
-                particles.appendChild(particle);
-            }
-        }
-        createParticles();
-
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.slide');
-        const totalSlides = slides.length;
-        const sliderTrack = document.getElementById('sliderTrack');
-        const dotsContainer = document.getElementById('dotsContainer');
-
-        for (let i = 0; i < totalSlides; i++) {
-            const dot = document.createElement('div');
-            dot.className = 'dot';
-            if (i === 0) dot.classList.add('active');
-            dot.addEventListener('click', () => goToSlide(i));
-            dotsContainer.appendChild(dot);
-        }
-
-        const dots = document.querySelectorAll('.dot');
-
-        function updateSlider() {
-            sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
-            dots.forEach((dot, index) => {
-                dot.classList.toggle('active', index === currentSlide);
-            });
-        }
-
-        function nextSlide() {
-            currentSlide = (currentSlide + 1) % totalSlides;
-            updateSlider();
-        }
-
-        function prevSlide() {
-            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-            updateSlider();
-        }
-
-        function goToSlide(index) {
-            currentSlide = index;
-            updateSlider();
-        }
-
-        document.getElementById('nextBtn').addEventListener('click', nextSlide);
-        document.getElementById('prevBtn').addEventListener('click', prevSlide);
-
-        let autoplayInterval = setInterval(nextSlide, 5000);
-        const sliderContainer = document.querySelector('.slider-container');
-        sliderContainer.addEventListener('mouseenter', () => clearInterval(autoplayInterval));
-        sliderContainer.addEventListener('mouseleave', () => autoplayInterval = setInterval(nextSlide, 5000));
-
-        const revealElements = document.querySelectorAll('.reveal');
-        const revealOnScroll = () => {
-            const windowHeight = window.innerHeight;
-            revealElements.forEach(element => {
-                const elementTop = element.getBoundingClientRect().top;
-                if (elementTop < windowHeight - 100) element.classList.add('active');
-            });
-        };
-        window.addEventListener('scroll', revealOnScroll);
-        revealOnScroll();
-
-        window.addEventListener('mousemove', (e) => {
-            const { clientX, clientY } = e;
-            const centerX = window.innerWidth / 2;
-            const centerY = window.innerHeight / 2;
-            const moveX = (clientX - centerX) / 50;
-            const moveY = (clientY - centerY) / 50;
-            document.querySelectorAll('.orb').forEach((orb, index) => {
-                const multiplier = (index + 1) * 0.3;
-                orb.style.transform = `translate(${moveX * multiplier}px, ${moveY * multiplier}px)`;
-            });
-        });
-
-        let touchStartX = 0;
-        sliderContainer.addEventListener('touchstart', (e) => touchStartX = e.changedTouches[0].screenX);
-        sliderContainer.addEventListener('touchend', (e) => {
-            const touchEndX = e.changedTouches[0].screenX;
-            if (touchEndX < touchStartX - 50) nextSlide();
-            if (touchEndX > touchStartX + 50) prevSlide();
-        });
-
-        // Initialize all lucide icons
-        lucide.createIcons();
-    </script>
+<script src="js/main.js"></script>
 </body>
 </html>
