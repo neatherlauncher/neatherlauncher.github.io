@@ -304,7 +304,54 @@ button.feat.is-active { border-color: var(--lime); background: rgba(14,34,12,.88
   border-radius: var(--r); padding: 10px 14px; font-family: inherit; font-size: 13px; }
 .releases-toolbar input:focus { border-color: var(--acc); outline: none; }
 .releases-toolbar input::placeholder { color: #a9c2ac; }
-.table-scroll { overflow: auto; height: clamp(300px, 42vh, 440px); }
+
+/* THEMED TABLE SCROLLBAR */
+.table-scroll { 
+  overflow-y: auto; 
+  height: clamp(300px, 42vh, 440px); 
+  scrollbar-width: thin;
+  scrollbar-color: var(--lime) var(--bg2);
+}
+.table-scroll::-webkit-scrollbar {
+  width: 16px;
+}
+.table-scroll::-webkit-scrollbar-track {
+  background: var(--bg2);
+  border-left: 2px solid rgba(0, 0, 0, 0.55);
+  box-shadow: inset 2px 0 5px rgba(0, 0, 0, 0.5);
+}
+.table-scroll::-webkit-scrollbar-thumb {
+  background: var(--lime);
+  border: 2px solid rgba(0, 0, 0, 0.55);
+  border-radius: var(--r);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.34), 
+              inset 0 -4px 0 rgba(0, 0, 0, 0.24);
+}
+.table-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--lime-hover);
+}
+.table-scroll::-webkit-scrollbar-thumb:active {
+  background: var(--lime-deep);
+  box-shadow: inset 0 2px 0 rgba(0, 0, 0, 0.3);
+}
+.table-scroll::-webkit-scrollbar-button {
+  display: block;
+  height: 16px;
+  background-color: var(--lime-deep);
+  border: 2px solid rgba(0, 0, 0, 0.55);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 10px;
+}
+.table-scroll::-webkit-scrollbar-button:single-button:vertical:decrement {
+  border-radius: var(--r) var(--r) 0 0;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10"><path d="M5 2L9 8H1L5 2Z" fill="%230F280E"/></svg>');
+}
+.table-scroll::-webkit-scrollbar-button:single-button:vertical:increment {
+  border-radius: 0 0 var(--r) var(--r);
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10"><path d="M5 8L1 2H9L5 8Z" fill="%230F280E"/></svg>');
+}
+
 table.releases { width: 100%; border-collapse: collapse; font-size: 13px; }
 table.releases th { text-align: left; font-size: 12px; color: var(--muted); padding: 12px 16px; border-bottom: 2px solid var(--edge); font-weight: 600; }
 table.releases td { padding: 15px 16px; border-bottom: 1px solid rgba(255,255,255,.09); vertical-align: top; }
